@@ -7,9 +7,6 @@ on:
         paths:
             - '*'
             - '!README.md'
-    pull_request:
-        branches:
-            - master
 
 jobs:
     build:
@@ -36,8 +33,6 @@ jobs:
 
             - name: Pack
               run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
-              if: github.event_name != 'pull_request'
 
             - name: Push to feedz.io
               run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
-              if: github.event_name != 'pull_request'
