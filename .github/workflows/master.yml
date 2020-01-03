@@ -1,0 +1,43 @@
+name: Build, Test, and Deploy master to feedz.io
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "*"
+      - "!README.md"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.101
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Unit Test
+        run: dotnet test --configuration Release
+
+      - name: Generate build number
+        uses: einaregilsson/build-number@v2
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Pack
+        run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
+        if: github.event_name != 'pull_request'
+
+      - name: Push to feedz.io
+        run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+        if: github.event_name != 'pull_request'
