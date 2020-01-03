@@ -32,4 +32,4 @@ jobs:
               run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
 
             - name: Push to feedz.io
-              run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+              run: dotnet nuget push **/*.nupkg -n true -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
