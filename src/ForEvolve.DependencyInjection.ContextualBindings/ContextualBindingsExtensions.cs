@@ -1,5 +1,6 @@
 ﻿using ForEvolve.DependencyInjection.ContextualBindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -29,17 +30,55 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
-            contextualServiceDescriptor.ConstructorArguments.Add(new ConstructorArgument(
-                typeof(TService),
-                typeof(TImplementation)
-            ));
-            contextualServiceDescriptor.Services.TryAdd(
-                ServiceDescriptor.Describe(
-                    typeof(TImplementation),
-                    typeof(TImplementation),
-                    lifetime
-                )
+            return WithConstructorArgument<TService, TImplementation>(
+                contextualServiceDescriptor, 
+                default, 
+                lifetime
             );
+            //var argumentDescriptor = contextualServiceDescriptor
+            //    .ContextualServices
+            //    .AddContextualBinding<TService, TImplementation>(lifetime);
+            //contextualServiceDescriptor.ConstructorArguments.Add(argumentDescriptor);
+            //contextualServiceDescriptor
+            //    .ContextualServices.TryAdd(
+            //        ServiceDescriptor.Describe(
+            //            typeof(TImplementation),
+            //            typeof(TImplementation),
+            //            lifetime
+            //        )
+            //    );
+
+            ////contextualServiceDescriptor.ConstructorArguments.Add(new ConstructorArgument(
+            ////    typeof(TService),
+            ////    typeof(TImplementation)
+            ////));
+            ////contextualServiceDescriptor.Services.TryAdd(
+            ////    ServiceDescriptor.Describe(
+            ////        typeof(TImplementation),
+            ////        typeof(TImplementation),
+            ////        lifetime
+            ////    )
+            ////);
+            //return contextualServiceDescriptor;
+        }
+
+        public static ContextualServiceDescriptor WithConstructorArgument<TService, TImplementation>(this ContextualServiceDescriptor contextualServiceDescriptor, Action<ContextualServiceDescriptor> argumentSetup, ServiceLifetime lifetime = ServiceLifetime.Transient)
+            where TService : class
+            where TImplementation : class, TService
+        {
+            var argumentDescriptor = contextualServiceDescriptor
+                .ContextualServices
+                .AddContextualBinding<TService, TImplementation>(lifetime);
+            contextualServiceDescriptor.ConstructorArguments.Add(argumentDescriptor);
+            contextualServiceDescriptor
+                .ContextualServices.TryAdd(
+                    ServiceDescriptor.Describe(
+                        typeof(TImplementation),
+                        typeof(TImplementation),
+                        lifetime
+                    )
+                );
+            argumentSetup?.Invoke(argumentDescriptor);
             return contextualServiceDescriptor;
         }
     }

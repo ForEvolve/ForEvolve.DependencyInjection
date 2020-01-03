@@ -21,15 +21,16 @@ namespace Microsoft.Extensions.DependencyInjection
             services
                 .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>()
                 .WithConstructorArgument<IDirectDependency, DirectDependency1>()
-                .WithConstructorArgument<IDirectDependency, DirectDependency2>()
-            ;
-
-            // Allow to build a subtree within the ComplexObjectTreeService binding
-            services
-                .AddContextualBinding<IDirectDependency, DirectDependency2>()
-                .WithConstructorArgument<ISubDependency1, SubDependency1_2>()
-                .WithConstructorArgument<ISubDependency2, SubDependency2_2>()
-                .WithConstructorArgument<ISubDependency3, SubDependency3_2>()
+                .WithConstructorArgument<IDirectDependency, DirectDependency2>(argument =>
+                {
+                    // Allow to build a subtree within the ComplexObjectTreeService binding
+                    // Contextually rebinding arguments
+                    argument
+                        .WithConstructorArgument<ISubDependency1, SubDependency1_2>()
+                        .WithConstructorArgument<ISubDependency2, SubDependency2_2>()
+                        .WithConstructorArgument<ISubDependency3, SubDependency3_2>()
+                    ;
+                })
             ;
             return services;
         }
