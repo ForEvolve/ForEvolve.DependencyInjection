@@ -4,8 +4,10 @@ Asp.Net Core dependency injection utilities. This project aims at adding a few m
 
 The current plan is:
 
-- Contextual dependency injection
-- Automatic factory creation, based on interfaces
+-   Contextual dependency injection
+-   Automatic factory creation, based on interfaces
+
+\*This is still early, but basic
 
 ## Contextual Bindings
 
@@ -16,15 +18,16 @@ The extended goal would be to allow building complex object trees, conditionally
 
 What is currently supported:
 
-- Transient contextual injection
-- Singleton contextual injection
-- A few other mixed use-cases, but that's still brittle for now
+-   Transient contextual injection
+-   Scoped contextual injection
+-   Singleton contextual injection
 
 What is not supported yet:
 
-- Contextual injection in MVC controllers
-- Scoped contextual injection
-- Contextual object trees building
+-   Contextual injection in MVC controllers
+-   Contextual object trees building (using a service providers tree to manage the complexity)
+
+_A few other mixed use-cases could also work, but use at your own risks!_
 
 ## AutoFactory
 
