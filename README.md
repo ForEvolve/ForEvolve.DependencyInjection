@@ -1,13 +1,14 @@
 # ForEvolve.DependencyInjection
 
+![Build, Test, and Deploy master to feedz.io](https://github.com/ForEvolve/ForEvolve.DependencyInjection/workflows/Build,%20Test,%20and%20Deploy%20master%20to%20feedz.io/badge.svg)
+[![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Ff.feedz.io%2Fforevolve%2Fdependencyinjection%2Fshield%2FForEvolve.DependencyInjection.ContextualBindings%2Flatest)](https://f.feedz.io/forevolve/dependencyinjection/packages/ForEvolve.DependencyInjection.ContextualBindings/latest/download)
+
 Asp.Net Core dependency injection utilities. This project aims at adding a few missing pieces to the Asp.Net Core container, without the need to replace it by a third-party.
 
 The current plan is:
 
 -   Contextual dependency injection
 -   Automatic factory creation, based on interfaces
-
-\*This is still early, but basic
 
 ## Contextual Bindings
 
@@ -16,13 +17,13 @@ _This is an early work in progress, and the API will likely change over time._
 The goal of this library is to add support for contextual dependency injection.
 The extended goal would be to allow building complex object trees, conditionally, allowing for more flexibility than a single binding per service.
 
-What is currently supported:
+What is currently working:
 
 -   Transient contextual injection
 -   Scoped contextual injection
 -   Singleton contextual injection
 
-What is not supported yet:
+What is not working yet:
 
 -   Contextual injection in MVC controllers
 -   Contextual object trees building (using a service providers tree to manage the complexity)
