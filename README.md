@@ -2,6 +2,7 @@
 
 ![Build, Test, and Deploy master to feedz.io](https://github.com/ForEvolve/ForEvolve.DependencyInjection/workflows/Build,%20Test,%20and%20Deploy%20master%20to%20feedz.io/badge.svg)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Ff.feedz.io%2Fforevolve%2Fdependencyinjection%2Fshield%2FForEvolve.DependencyInjection.ContextualBindings%2Flatest)](https://f.feedz.io/forevolve/dependencyinjection/packages/ForEvolve.DependencyInjection.ContextualBindings/latest/download)
+[![NuGet.org](https://img.shields.io/nuget/vpre/ForEvolve.DependencyInjection.ContextualBindings)](https://www.nuget.org/packages/ForEvolve.DependencyInjection.ContextualBindings/)
 
 Asp.Net Core dependency injection utilities. This project aims at adding a few missing pieces to the Asp.Net Core container, without the need to replace it by a third-party.
 
