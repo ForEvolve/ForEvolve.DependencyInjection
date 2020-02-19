@@ -16,12 +16,15 @@ namespace ForEvolve.DependencyInjection
     /// When inheriting of this class, make sure to register all dependencies
     /// that need to be injected in the constructor other than <see cref="IServiceCollection>"/>
     /// with the <see cref="IScanningContext"/> by calling the 
-    /// <see cref="IScanningContext.WithDependencies(System.Action{IServiceCollection})"/>
+    /// <see cref="IScanningContext.WithDependencies(Action{IServiceCollection})"/>
     /// method or any available extension methods.
     /// </remarks>
-
     public abstract class DependencyInjectionModule : IDependencyInjectionModule
     {
+        /// <summary>
+        /// Register the module's dependencies with the specified <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to register bindings with.</param>
         public DependencyInjectionModule(IServiceCollection services)
         {
 
