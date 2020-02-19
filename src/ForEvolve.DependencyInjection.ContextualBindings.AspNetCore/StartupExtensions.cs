@@ -11,6 +11,11 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ForEvolveDependencyInjectionContextualBindingsAspNetCoreStartupExtensions
     {
+        /// <summary>
+        /// Enables contextual contructor injection for controllers.
+        /// </summary>
+        /// <param name="mvcBuilder">The <see cref="IMvcBuilder"/> that controllers were registered with.</param>
+        /// <returns>The <paramref name="mvcBuilder"/>.</returns>
         public static IMvcBuilder WithContextualBindings(this IMvcBuilder mvcBuilder)
         {
             mvcBuilder.Services
