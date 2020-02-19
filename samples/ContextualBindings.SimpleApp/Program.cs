@@ -23,6 +23,7 @@ namespace ContextualBindings.SimpleApp
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .ConfigureServices(services =>
                     {
+                        // Contextual Bindings
                         services
                             .AddContextualControllerInjection()
                             .AddContextualServiceInjection()
@@ -30,8 +31,9 @@ namespace ContextualBindings.SimpleApp
                         ;
 
                         // MVC
-                        services.AddControllers();
-                        services.Decorate<IControllerActivator, ControllerActivator>();
+                        services
+                            .AddControllers()
+                            .WithContextualBindings();
                     })
                     .Configure(app => app
                         .UseDeveloperExceptionPage()
@@ -41,36 +43,6 @@ namespace ContextualBindings.SimpleApp
                 )
                 .Build()
                 .Run();
-        }
-    }
-
-    public class ControllerActivator : IControllerActivator
-    {
-        private readonly IControllerActivator _controllerActivator;
-
-        public ControllerActivator(IControllerActivator controllerActivator)
-        {
-            _controllerActivator = controllerActivator ?? throw new ArgumentNullException(nameof(controllerActivator));
-        }
-
-        public object Create(ControllerContext controllerContext)
-        {
-            // Try to activate the controller using service provider
-            var type = controllerContext.ActionDescriptor.ControllerTypeInfo.AsType();
-            var result = controllerContext.HttpContext.RequestServices.GetService(type);
-
-            // Fallback to the default IControllerActivator 
-            if (result == null)
-            {
-                result = _controllerActivator.Create(controllerContext);
-            }
-
-            return result;
-        }
-
-        public void Release(ControllerContext context, object controller)
-        {
-            _controllerActivator.Release(context, controller);
         }
     }
 }

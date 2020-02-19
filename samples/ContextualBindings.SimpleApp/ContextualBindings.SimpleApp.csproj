@@ -5,11 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Scrutor" Version="3.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.ContextualBindings\ForEvolve.DependencyInjection.ContextualBindings.csproj" />
+    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>
