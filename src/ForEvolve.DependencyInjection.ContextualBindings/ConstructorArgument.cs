@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace ForEvolve.DependencyInjection.ContextualBindings
 {
@@ -12,5 +13,7 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
 
         public Type ServiceType { get; }
         public Type ImplementationType { get; }
+
+        public ServiceDescriptor ServiceDescriptor { get; }
     }
 }

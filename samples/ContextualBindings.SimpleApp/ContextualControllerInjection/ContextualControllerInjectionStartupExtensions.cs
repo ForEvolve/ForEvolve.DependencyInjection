@@ -1,4 +1,6 @@
 ﻿using ContextualBindings.SimpleApp.ContextualControllerInjection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddContextualControllerInjection(this IServiceCollection services)
         {
             services
-                .AddContextualBinding<FirstController>()
-                .WithConstructorArgument<IService, Implementation1>()
-            ;
-            services
-                .AddContextualBinding<SecondController>()
-                .WithConstructorArgument<IService, Implementation2>()
+                .AddContextualBinding<FirstController>(setup: ctx => ctx.WithConstructorArgument<IService, Implementation1>())
+                .AddContextualBinding<SecondController>(setup: ctx => ctx.WithConstructorArgument<IService, Implementation2>())
             ;
             return services;
         }

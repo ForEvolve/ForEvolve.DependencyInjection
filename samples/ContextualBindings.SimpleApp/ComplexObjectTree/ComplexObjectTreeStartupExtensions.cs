@@ -12,25 +12,42 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddComplexObjectTree(this IServiceCollection services)
         {
-            // Create default bindings
-            services.AddSingleton<ISubDependency1, SubDependency1_1>();
-            services.AddSingleton<ISubDependency2, SubDependency2_1>();
-            services.AddSingleton<ISubDependency3, SubDependency3_1>();
-
-            // Contextual Injection
             services
-                .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>()
-                .WithConstructorArgument<IDirectDependency, DirectDependency1>()
-                .WithConstructorArgument<IDirectDependency, DirectDependency2>()
-            ;
+                .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>(setup: csd =>
+                {
+                    csd.WithConstructorArgument<IDirectDependency, DirectDependency1>(setup: csd =>
+                    {
+                        csd.WithConstructorArgument<ISubDependency1, SubDependency1_1>();
+                        csd.WithConstructorArgument<ISubDependency2, SubDependency2_1>();
+                        csd.WithConstructorArgument<ISubDependency3, SubDependency3_1>();
+                    });
+                    csd.WithConstructorArgument<IDirectDependency, DirectDependency2>(setup: csd =>
+                    {
+                        csd.WithConstructorArgument<ISubDependency1, SubDependency1_2>();
+                        csd.WithConstructorArgument<ISubDependency2, SubDependency2_2>();
+                        csd.WithConstructorArgument<ISubDependency3, SubDependency3_2>();
+                    });
+                });
 
-            // Allow to build a subtree within the ComplexObjectTreeService binding
-            services
-                .AddContextualBinding<IDirectDependency, DirectDependency2>()
-                .WithConstructorArgument<ISubDependency1, SubDependency1_2>()
-                .WithConstructorArgument<ISubDependency2, SubDependency2_2>()
-                .WithConstructorArgument<ISubDependency3, SubDependency3_2>()
-            ;
+            //// Create default bindings
+            //services.AddSingleton<ISubDependency1, SubDependency1_1>();
+            //services.AddSingleton<ISubDependency2, SubDependency2_1>();
+            //services.AddSingleton<ISubDependency3, SubDependency3_1>();
+
+            //// Contextual Injection
+            //services
+            //    .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>()
+            //        .WithConstructorArgument<IDirectDependency, DirectDependency1>()
+            //        .WithConstructorArgument<IDirectDependency, DirectDependency2>()
+            //;
+
+            //// Allow to build a subtree within the ComplexObjectTreeService binding
+            //services
+            //    .AddContextualBinding<IDirectDependency, DirectDependency2>()
+            //        .WithConstructorArgument<ISubDependency1, SubDependency1_2>()
+            //        .WithConstructorArgument<ISubDependency2, SubDependency2_2>()
+            //        .WithConstructorArgument<ISubDependency3, SubDependency3_2>()
+            //;
             return services;
         }
     }

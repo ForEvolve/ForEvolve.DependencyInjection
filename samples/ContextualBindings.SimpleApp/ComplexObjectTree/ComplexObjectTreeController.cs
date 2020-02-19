@@ -10,24 +10,24 @@ namespace ContextualBindings.SimpleApp.ComplexObjectTree
     [Route("/api/complex-object-tree")]
     public class ComplexObjectTreeController : ControllerBase
     {
-        private readonly IComplexObjectTreeService _partialSetupService;
+        private readonly IComplexObjectTreeService _complexObjectTreeService;
 
-        public ComplexObjectTreeController(IComplexObjectTreeService partialSetupService)
+        public ComplexObjectTreeController(IComplexObjectTreeService complexObjectTreeService)
         {
-            _partialSetupService = partialSetupService ?? throw new ArgumentNullException(nameof(partialSetupService));
+            _complexObjectTreeService = complexObjectTreeService ?? throw new ArgumentNullException(nameof(complexObjectTreeService));
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _partialSetupService.Get();
+            var result = _complexObjectTreeService.Get();
             return Ok(result);
         }
     }
 
     public interface IComplexObjectTreeService
     {
-        IEnumerable<string> Get();
+        object Get();
     }
 
     public class ComplexObjectTreeService : IComplexObjectTreeService
@@ -41,18 +41,20 @@ namespace ContextualBindings.SimpleApp.ComplexObjectTree
             _dependency2 = dependency2 ?? throw new ArgumentNullException(nameof(dependency2));
         }
 
-        public IEnumerable<string> Get()
+        public object Get()
         {
-            return _dependency1
-                .Get()
-                .Concat(_dependency2.Get())
-            ;
+            return new
+            {
+                name = nameof(ComplexObjectTreeService),
+                dependency1 = _dependency1.Get(),
+                dependency2 = _dependency2.Get()
+            };
         }
     }
 
     public interface IDirectDependency
     {
-        IEnumerable<string> Get();
+        object Get();
     }
 
     public class DirectDependency1 : IDirectDependency
@@ -68,11 +70,15 @@ namespace ContextualBindings.SimpleApp.ComplexObjectTree
             _dependency3 = dependency3 ?? throw new ArgumentNullException(nameof(dependency3));
         }
 
-        public IEnumerable<string> Get()
+        public object Get()
         {
-            yield return _dependency1.Get();
-            yield return _dependency2.Get();
-            yield return _dependency3.Get();
+            return new
+            {
+                name = nameof(DirectDependency1),
+                dependency1 = _dependency1.Get(),
+                dependency2 = _dependency2.Get(),
+                dependency3 = _dependency3.Get()
+            };
         }
     }
 
@@ -89,11 +95,15 @@ namespace ContextualBindings.SimpleApp.ComplexObjectTree
             _dependency3 = dependency3 ?? throw new ArgumentNullException(nameof(dependency3));
         }
 
-        public IEnumerable<string> Get()
+        public object Get()
         {
-            yield return _dependency1.Get();
-            yield return _dependency2.Get();
-            yield return _dependency3.Get();
+            return new
+            {
+                name = nameof(DirectDependency2),
+                dependency1 = _dependency1.Get(),
+                dependency2 = _dependency2.Get(),
+                dependency3 = _dependency3.Get()
+            };
         }
     }
 
