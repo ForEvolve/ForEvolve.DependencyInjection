@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection\ForEvolve.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.Modules\ForEvolve.DependencyInjection.Modules.csproj" />
   </ItemGroup>
 
 </Project>
