@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection\ForEvolve.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

@@ -23,11 +23,9 @@ namespace ContextualBindings.SimpleApp
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .ConfigureServices(services =>
                     {
-                        // Contextual Bindings
                         services
-                            .AddContextualControllerInjection()
-                            .AddContextualServiceInjection()
-                            .AddComplexObjectTree()
+                            .ScanForDIModules()
+                            .FromAssemblyOf<Program>()
                         ;
 
                         // MVC

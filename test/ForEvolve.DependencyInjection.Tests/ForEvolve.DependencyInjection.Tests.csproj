@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>ForEvolve.DependencyInjection.ContextualBindings.AspNetCore</RootNamespace>
+    <RootNamespace>ForEvolve.DependencyInjection</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\ForEvolve.DependencyInjection\ForEvolve.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

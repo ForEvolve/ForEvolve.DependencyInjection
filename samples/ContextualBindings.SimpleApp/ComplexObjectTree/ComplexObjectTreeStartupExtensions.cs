@@ -1,4 +1,5 @@
 ﻿using ContextualBindings.SimpleApp.ComplexObjectTree;
+using ForEvolve.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ComplexObjectTreeStartupExtensions
+    public class ComplexObjectTreeModule : DependencyInjectionModule
     {
-        public static IServiceCollection AddComplexObjectTree(this IServiceCollection services)
+        public ComplexObjectTreeModule(IServiceCollection services)
+            : base(services)
         {
             services
                 .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>(setup: csd =>
@@ -27,8 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
                         csd.WithConstructorArgument<ISubDependency2, SubDependency2_2>();
                         csd.WithConstructorArgument<ISubDependency3, SubDependency3_2>();
                     });
-                });
-            return services;
+                })
+            ;
         }
     }
 }

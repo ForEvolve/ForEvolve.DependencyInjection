@@ -1,4 +1,5 @@
 ﻿using ContextualBindings.SimpleApp.ContextualServiceInjection;
+using ForEvolve.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ContextualServiceInjectionStartupExtensions
+    public class ContextualServiceInjectionModule : DependencyInjectionModule
     {
-        public static IServiceCollection AddContextualServiceInjection(this IServiceCollection services)
+        public ContextualServiceInjectionModule(IServiceCollection services)
+            : base(services)
         {
             // Inject a LastNameGenerator instance into the INameGenerator parameter of FirstNameService
             services
@@ -27,7 +29,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
                 .WithConstructorArgument<INameGenerator, LastNameGenerator>())
             ;
-            return services;
         }
     }
 }
