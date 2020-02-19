@@ -24,14 +24,10 @@ namespace ContextualBindings.SimpleApp
                     .ConfigureServices(services =>
                     {
                         services
-                            // Not working yet
                             .AddContextualControllerInjection()
-
-                            // Working
                             .AddContextualServiceInjection()
                             .AddComplexObjectTree()
                         ;
-
 
                         // MVC
                         services.AddControllers();
@@ -59,7 +55,16 @@ namespace ContextualBindings.SimpleApp
 
         public object Create(ControllerContext controllerContext)
         {
-            var result = _controllerActivator.Create(controllerContext);
+            // Try to activate the controller using service provider
+            var type = controllerContext.ActionDescriptor.ControllerTypeInfo.AsType();
+            var result = controllerContext.HttpContext.RequestServices.GetService(type);
+
+            // Fallback to the default IControllerActivator 
+            if (result == null)
+            {
+                result = _controllerActivator.Create(controllerContext);
+            }
+
             return result;
         }
 

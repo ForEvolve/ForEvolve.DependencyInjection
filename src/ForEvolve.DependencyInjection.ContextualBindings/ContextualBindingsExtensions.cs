@@ -42,21 +42,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     setup?.Invoke(csd);
                 });
-
-            //return contextualServiceDescriptor;
-
-            //object factory(IServiceProvider serviceProvider)
-            //{
-            //    var ConstructorArguments = new List<ConstructorArgument>();
-            //    var serviceTypes = ConstructorArguments
-            //        .Select(x => x.ServiceType)
-            //        .ToArray();
-            //    var arguments = ConstructorArguments
-            //        .Select(x => serviceProvider.GetService(x.ImplementationType))
-            //        .ToArray();
-            //    var f = ActivatorUtilities.CreateFactory(typeof(TImplementation), serviceTypes);
-            //    return f(serviceProvider, arguments);
-            //}
             return contextualServiceDescriptor;
         }
     }
