@@ -14,8 +14,8 @@ namespace ContextualBindings.SimpleApp
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            yield return $"{BaseUrl}/api/first-context";
-            yield return $"{BaseUrl}/api/second-context";
+            yield return $"{BaseUrl}/api/first-controller-context";
+            yield return $"{BaseUrl}/api/second-controller-context";
             yield return $"{BaseUrl}/api/firstname";
             yield return $"{BaseUrl}/api/lastname";
             yield return $"{BaseUrl}/api/fullname";

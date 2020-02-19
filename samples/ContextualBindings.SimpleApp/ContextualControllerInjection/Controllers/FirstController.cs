@@ -3,7 +3,7 @@ using System;
 
 namespace ContextualBindings.SimpleApp.ContextualControllerInjection
 {
-    [Route("api/first-context")]
+    [Route("api/first-controller-context")]
     public class FirstController : ControllerBase
     {
         private readonly IService _service;
