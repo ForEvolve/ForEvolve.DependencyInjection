@@ -13,7 +13,5 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
 
         public Type ServiceType { get; }
         public Type ImplementationType { get; }
-
-        public ServiceDescriptor ServiceDescriptor { get; }
     }
 }
