@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ContextualBindings.SimpleApp.ContextualControllerInjection;
 using ContextualBindings.SimpleApp.ContextualServiceInjection;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ContextualBindings.SimpleApp
 {
@@ -22,16 +24,14 @@ namespace ContextualBindings.SimpleApp
                     .ConfigureServices(services =>
                     {
                         services
-                            // Not working yet
-                            .AddContextualControllerInjection()
-
-                            // Working
-                            .AddContextualServiceInjection()
-                            .AddComplexObjectTree()
+                            .ScanForDIModules()
+                            .FromAssemblyOf<Program>()
                         ;
 
                         // MVC
-                        services.AddControllers();
+                        services
+                            .AddControllers()
+                            .WithContextualBindings();
                     })
                     .Configure(app => app
                         .UseDeveloperExceptionPage()

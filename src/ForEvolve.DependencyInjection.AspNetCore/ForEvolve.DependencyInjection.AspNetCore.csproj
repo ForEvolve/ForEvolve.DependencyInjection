@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore\ForEvolve.DependencyInjection.ContextualBindings.AspNetCore.csproj" />
+    <ProjectReference Include="..\ForEvolve.DependencyInjection\ForEvolve.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

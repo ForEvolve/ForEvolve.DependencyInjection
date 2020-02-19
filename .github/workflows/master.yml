@@ -4,7 +4,12 @@ on:
     push:
         branches:
             - master
+        paths-ignore:
+            - 'samples/**'
 
+    pull_request:
+        branches:
+            - master
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -17,19 +22,32 @@ jobs:
               with:
                   dotnet-version: '3.1.100'
 
+            - uses: aarnott/nbgv@v0.3
+              with:
+                  setAllVars: true
+
             - name: Build
               run: dotnet build --configuration Release
 
             - name: Unit Test
               run: dotnet test --configuration Release
 
-            - name: Generate build number
-              uses: einaregilsson/build-number@v2
-              with:
-                  token: ${{secrets.GITHUB_TOKEN}}
-
             - name: Pack
-              run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
+              run: dotnet pack --configuration Release # /p:PackageVersion=$NBGV_NuGetPackageVersion
+
+            # - name: Generate build number
+            #   uses: einaregilsson/build-number@v2
+            #   with:
+            #       token: ${{secrets.GITHUB_TOKEN}}
+
+            # - name: Pack
+            #   run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
 
             - name: Push to feedz.io
-              run: dotnet nuget push **/*.nupkg -n true -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+              run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+              #run: dotnet nuget push **/*.nupkg -n true -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+              if: github.event_name == 'pull_request'
+
+            - name: Push to NuGet.org
+              run: dotnet nuget push **/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+              if: github.event_name == 'push' && github.ref == 'master'
