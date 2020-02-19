@@ -15,19 +15,20 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Inject a LastNameGenerator instance into the INameGenerator parameter of FirstNameService
             services
-                .AddContextualBinding<IFirstNameService, FirstNameService>(setup: ctx => ctx.WithConstructorArgument<INameGenerator, FirstNameGenerator>())
+                .AddContextualBinding<IFirstNameService, FirstNameService>(d => d
+                    .WithConstructorArgument<INameGenerator, FirstNameGenerator>())
             ;
             // Inject a LastNameGenerator instance into the INameGenerator parameter of LastNameService
             services
-                .AddContextualBinding<ILastNameService, LastNameService>(setup: ctx => ctx
-                .WithConstructorArgument<INameGenerator, LastNameGenerator>())
+                .AddContextualBinding<ILastNameService, LastNameService>(d => d
+                    .WithConstructorArgument<INameGenerator, LastNameGenerator>())
             ;
             // Inject a FirstNameGenerator in the first INameGenerator parameter and
             // inject a LastNameGenerator in the second INameGenerator parameter of FullNameGenerator.
             services
-                .AddContextualBinding<INameGenerator, FullNameGenerator>(setup: ctx => ctx
-                .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
-                .WithConstructorArgument<INameGenerator, LastNameGenerator>())
+                .AddContextualBinding<INameGenerator, FullNameGenerator>(d => d
+                    .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
+                    .WithConstructorArgument<INameGenerator, LastNameGenerator>())
             ;
         }
     }

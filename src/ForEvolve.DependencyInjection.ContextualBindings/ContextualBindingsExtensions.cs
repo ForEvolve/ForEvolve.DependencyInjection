@@ -8,13 +8,13 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ContextualBindingsExtensions
     {
-        public static IServiceCollection AddContextualBinding<TService>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Transient, Action<ContextualServiceDescriptor> setup = null)
+        public static IServiceCollection AddContextualBinding<TService>(this IServiceCollection services, Action<ContextualServiceDescriptor> setup = null, ServiceLifetime lifetime = ServiceLifetime.Transient)
             where TService : class
         {
-            return services.AddContextualBinding<TService, TService>(lifetime, setup);
+            return services.AddContextualBinding<TService, TService>(setup, lifetime);
         }
 
-        public static IServiceCollection AddContextualBinding<TService, TImplementation>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Transient, Action<ContextualServiceDescriptor> setup = null)
+        public static IServiceCollection AddContextualBinding<TService, TImplementation>(this IServiceCollection services, Action<ContextualServiceDescriptor> setup = null, ServiceLifetime lifetime = ServiceLifetime.Transient)
             where TService : class
             where TImplementation : class, TService
         {
@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        public static ContextualServiceDescriptor WithConstructorArgument<TService, TImplementation>(this ContextualServiceDescriptor contextualServiceDescriptor, ServiceLifetime lifetime = ServiceLifetime.Transient, Action<ContextualServiceDescriptor> setup = null)
+        public static ContextualServiceDescriptor WithConstructorArgument<TService, TImplementation>(this ContextualServiceDescriptor contextualServiceDescriptor, Action<ContextualServiceDescriptor> setup = null, ServiceLifetime lifetime = ServiceLifetime.Transient)
             where TService : class
             where TImplementation : class, TService
         {
@@ -38,10 +38,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 typeof(TImplementation)
             ));
             contextualServiceDescriptor.Services
-                .AddContextualBinding<TImplementation>(lifetime, csd =>
+                .AddContextualBinding<TImplementation>(csd =>
                 {
                     setup?.Invoke(csd);
-                });
+                }, lifetime);
             return contextualServiceDescriptor;
         }
     }

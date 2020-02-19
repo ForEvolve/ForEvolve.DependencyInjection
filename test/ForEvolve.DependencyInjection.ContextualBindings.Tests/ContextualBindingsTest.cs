@@ -55,7 +55,7 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             var services = new ServiceCollection();
             services
                 .AddContextualBinding<IConsumer, Consumer1>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Singleton));
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Singleton));
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
@@ -73,7 +73,7 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             var services = new ServiceCollection();
             services
                 .AddContextualBinding<IConsumer, Consumer1>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Scoped));
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Scoped));
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
@@ -91,7 +91,7 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             var services = new ServiceCollection();
             services
                 .AddContextualBinding<IConsumer, Consumer1>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Scoped));
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Scoped));
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
@@ -116,7 +116,7 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             var services = new ServiceCollection();
             services
                 .AddContextualBinding<IConsumer, Consumer1>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Transient));
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Transient));
             var serviceProvider = services.BuildServiceProvider();
 
             // Act
@@ -134,13 +134,13 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             var services = new ServiceCollection();
             services
                 .AddContextualBinding<DualConsumer>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Transient)
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Transient))
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Transient)
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Transient))
                 ;
             services
                 .AddContextualBinding<IDualConsumer, DualConsumer>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Transient)
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Transient))
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Transient)
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Transient))
                 ;
             var serviceProvider = services.BuildServiceProvider();
 
@@ -163,17 +163,17 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             services.AddSingleton<INonContextual, NonContextual>();
             services
                 .AddContextualBinding<MixedClass1>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Transient))
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Transient))
                 ;
             services
                 .AddContextualBinding<MixedClass2>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Transient)
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Transient))
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Transient)
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Transient))
                 ;
             services
                 .AddContextualBinding<MixedClass3>(setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>(ServiceLifetime.Transient)
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Transient))
+                .WithConstructorArgument<IService, Service1>(lifetime: ServiceLifetime.Transient)
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Transient))
                 ;
             var serviceProvider = services.BuildServiceProvider();
 
@@ -201,12 +201,12 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             services
                 .AddContextualBinding<MixedClass3>(setup: ctx => ctx
                 .WithConstructorArgument<IService, Service1>()
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Singleton))
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Singleton))
                 ;
             services
                 .AddContextualBinding<ComplexObject>(setup: ctx => ctx
-                .WithConstructorArgument<IConsumer, Consumer2>(ServiceLifetime.Singleton)
-                .WithConstructorArgument<IService, Service2>(ServiceLifetime.Singleton))
+                .WithConstructorArgument<IConsumer, Consumer2>(lifetime: ServiceLifetime.Singleton)
+                .WithConstructorArgument<IService, Service2>(lifetime: ServiceLifetime.Singleton))
                 ;
             services.AddSingleton<IService, Service1>();
             var serviceProvider = services.BuildServiceProvider();
@@ -236,8 +236,8 @@ namespace ForEvolve.DependencyInjection.ContextualBindings
             // Arrange
             var services = new ServiceCollection();
             services
-                .AddContextualBinding<IConsumer, Consumer1>(ServiceLifetime.Singleton, setup: ctx => ctx
-                .WithConstructorArgument<IService, Service1>())
+                .AddContextualBinding<IConsumer, Consumer1>(setup: ctx => ctx
+                .WithConstructorArgument<IService, Service1>(), lifetime: ServiceLifetime.Singleton)
                 ;
             var serviceProvider = services.BuildServiceProvider();
 

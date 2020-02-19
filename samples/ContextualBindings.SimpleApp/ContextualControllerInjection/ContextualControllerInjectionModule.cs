@@ -16,8 +16,10 @@ namespace Microsoft.Extensions.DependencyInjection
             : base(services)
         {
             services
-                .AddContextualBinding<FirstController>(setup: ctx => ctx.WithConstructorArgument<IService, Implementation1>())
-                .AddContextualBinding<SecondController>(setup: ctx => ctx.WithConstructorArgument<IService, Implementation2>())
+                .AddContextualBinding<FirstController>(d => d
+                    .WithConstructorArgument<IService, Implementation1>())
+                .AddContextualBinding<SecondController>(d => d
+                    .WithConstructorArgument<IService, Implementation2>())
             ;
         }
     }
