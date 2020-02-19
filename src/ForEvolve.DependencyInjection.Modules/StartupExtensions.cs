@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ForEvolveDependencyInjectionStartupExtensions
+    public static class ForEvolveDependencyInjectionModulesStartupExtensions
     {
         /// <summary>
         /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Register the specified <see cref="IConfiguration"/>, used during DI module instanciation.
+        /// Register the specified <see cref="IConfiguration"/>, used during DI module instantiation.
         /// </summary>
         /// <param name="scanningContext">The scanning context to add <see cref="IConfiguration"/> to.</param>
         /// <param name="configuration">The <see cref="IConfiguration"/> to add.</param>

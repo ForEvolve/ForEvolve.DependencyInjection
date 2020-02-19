@@ -1,34 +1,210 @@
-# ForEvolve.DependencyInjection
+# ForEvolve DependencyInjection
 
 ![Build, Test, and Deploy master to feedz.io](https://github.com/ForEvolve/ForEvolve.DependencyInjection/workflows/Build,%20Test,%20and%20Deploy%20master%20to%20feedz.io/badge.svg)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Ff.feedz.io%2Fforevolve%2Fdependencyinjection%2Fshield%2FForEvolve.DependencyInjection.ContextualBindings%2Flatest)](https://f.feedz.io/forevolve/dependencyinjection/packages/ForEvolve.DependencyInjection.ContextualBindings/latest/download)
 
 Asp.Net Core dependency injection utilities. This project aims at adding a few missing pieces to the Asp.Net Core container, without the need to replace it by a third-party.
 
-The current plan is:
+**What is supported:**
 
 -   Contextual dependency injection
+-   Module-based dependency registration with auto-discovery
+
+**What I'd like to add:**
+
 -   Automatic factory creation, based on interfaces
 
-## Contextual Bindings
+# Bundles
 
-_This is an early work in progress, and the API will likely change over time._
+The following packages are bundling multiple packages as convenience.
 
-The goal of this library is to add support for contextual dependency injection.
-The extended goal would be to allow building complex object trees, conditionally, allowing for more flexibility than a single binding per service.
+## ForEvolve.DependencyInjection
+
+Bundles containing the following packages:
+
+-   `ForEvolve.DependencyInjection.ContextualBindings`
+-   `ForEvolve.DependencyInjection.Modules`
+
+### Install
+
+```bash
+dotnet add package ForEvolve.DependencyInjection
+```
+
+## ForEvolve.DependencyInjection.AspNetCore
+
+Bundles containing the following packages:
+
+-   `ForEvolve.DependencyInjection`
+-   `ForEvolve.DependencyInjection.ContextualBindings.AspNetCore`
+
+### Install
+
+```bash
+dotnet add package ForEvolve.DependencyInjection.AspNetCore
+```
+
+# Individual packages
+
+## ForEvolve.DependencyInjection.ContextualBindings
+
+The goal of the `ForEvolve.DependencyInjection.ContextualBindings` library is to add support for contextual dependency injection to any application.
 
 What is currently working:
 
 -   Transient contextual injection
 -   Scoped contextual injection
 -   Singleton contextual injection
-
-What is not working yet:
-
 -   Contextual injection in MVC controllers
--   Contextual object trees building (using a service providers tree to manage the complexity)
+-   Contextual object trees building
 
-_A few other mixed use-cases could also work, but use at your own risks!_
+### Install
+
+```bash
+dotnet add package ForEvolve.DependencyInjection.ContextualBindings
+# OR
+dotnet add package ForEvolve.DependencyInjection.ContextualBindings.AspNetCore
+```
+
+### How to use
+
+You can create simple contextual bindings like:
+
+```csharp
+// Inject a LastNameGenerator instance into the INameGenerator parameter of FirstNameService
+services
+    .AddContextualBinding<IFirstNameService, FirstNameService>(d => d
+        .WithConstructorArgument<INameGenerator, FirstNameGenerator>())
+;
+// Inject a LastNameGenerator instance into the INameGenerator parameter of LastNameService
+services
+    .AddContextualBinding<ILastNameService, LastNameService>(d => d
+        .WithConstructorArgument<INameGenerator, LastNameGenerator>())
+;
+// Inject a FirstNameGenerator in the first INameGenerator parameter and
+// inject a LastNameGenerator in the second INameGenerator parameter of FullNameGenerator.
+services
+    .AddContextualBinding<INameGenerator, FullNameGenerator>(d => d
+        .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
+        .WithConstructorArgument<INameGenerator, LastNameGenerator>())
+;
+```
+
+Or go for more complex object trees like this:
+
+```csharp
+services
+    .AddContextualBinding<IComplexObjectTreeService, ComplexObjectTreeService>(d =>
+    {
+        d.WithConstructorArgument<IDirectDependency, DirectDependency1>(d => d
+            .WithConstructorArgument<ISubDependency1, SubDependency1_1>()
+            .WithConstructorArgument<ISubDependency2, SubDependency2_1>()
+            .WithConstructorArgument<ISubDependency3, SubDependency3_1>()
+        );
+        d.WithConstructorArgument<IDirectDependency, DirectDependency2>(d => d
+            .WithConstructorArgument<ISubDependency1, SubDependency1_2>()
+            .WithConstructorArgument<ISubDependency2, SubDependency2_2>()
+            .WithConstructorArgument<ISubDependency3, SubDependency3_2>()
+        );
+    })
+;
+```
+
+## ForEvolve.DependencyInjection.ContextualBindings.AspNetCore
+
+The `ForEvolve.DependencyInjection.ContextualBindings.AspNetCore` library adds support for contextual dependency injection into controller's constructors. It extend the capabilities of `ForEvolve.DependencyInjection.ContextualBindings`. Under the hood, it decorates the default `IControllerActivator` by a custom implementation, loading conditional bindings when they exist and falling back to the default implementation when none does.
+
+> This project uses `Scrutor` to decorate the `IControllerActivator`.
+
+### Install
+
+```bash
+dotnet add package ForEvolve.DependencyInjection.ContextualBindings.AspNetCore
+```
+
+### How to use
+
+To enable controller injection, you must register the `IControllerActivator` decorator by calling the `WithContextualBindings()` extension method on an `IMvcBuilder`, like this:
+
+```csharp
+services
+    .AddControllers()
+    .WithContextualBindings();
+```
+
+Then you can use the capabilities of `ForEvolve.DependencyInjection.ContextualBindings`, but for controllers, like this:
+
+```csharp
+services
+    .AddContextualBinding<FirstController>(d => d
+        .WithConstructorArgument<IService, Implementation1>())
+    .AddContextualBinding<SecondController>(d => d
+        .WithConstructorArgument<IService, Implementation2>())
+;
+```
+
+## ForEvolve.DependencyInjection.Modules
+
+The goal of the `ForEvolve.DependencyInjection.Modules` library is to allow splitting DI bindings into modules and enabling auto-discovery of those modules.
+
+### Install
+
+```bash
+dotnet add package ForEvolve.DependencyInjection.Modules
+```
+
+### How to use
+
+To enable and scan for modules, use the following code:
+
+```csharp
+services
+    .ScanForDIModules()
+    .FromAssemblyOf<Program>()
+;
+// OR
+services
+    .ScanForDIModules()
+    .FromAssemblyOf<AnyClassThatIsPartOfTheAssemblyThatYouWantToScan>()
+;
+```
+
+To create a module you can implement `IDependencyInjectionModule` or inherit from `DependencyInjectionModule`.
+You can inject any dependencies that you want in your constructor, as long as you defined them (see bellow).
+Once you have a class, register your dependencies, like this:
+
+```csharp
+public class SomeImportantDIModule : DependencyInjectionModule
+{
+    public ContextualServiceInjectionModule(IServiceCollection services)
+        : base(services)
+    {
+        services.AddSingleton<ISomeService, SomeImplementation>();
+        services
+            .AddContextualBinding<FirstController>(d => d
+                .WithConstructorArgument<IService, Implementation1>())
+        ;
+        // ...
+    }
+}
+```
+
+You can also register custom dependencies that can be injected in your modules like this:
+
+```csharp
+services
+    .ScanForDIModules()
+    .FromAssemblyOf<Program>()
+    .WithConfiguration(configuration)
+    .WithDependencies(services => services.TryAddSingleton<ISomeInterface, SomeImplementation>())
+;
+```
+
+The dependencies are only used during the registration process, are only added to a private `IServiceCollection`, and are not added to the application `IServiceCollection`. Use these only to initialize modules.
+
+As long as the assembly containing the modules are scanned, you can split your bindings as you want and you don't need to do anything else.
+
+# Future
 
 ## AutoFactory
 
@@ -46,42 +222,9 @@ public interface IFactory
 
 The initial implementation would be a simple service locator, that gets `IService` from the container. The design may change along the way to support more complex scenarios.
 
-# How to use
+# Found a bug or have a feature request?
 
-Feel free to look at the tests and the sample projects to get an idea of the possibilities.
-
-## Install
-
-At some point there will be some packages; until then, here is the name they will have:
-
-```PowerShell
-dotnet add package ForEvolve.DependencyInjection.AutoFactory
-dotnet add package ForEvolve.DependencyInjection.ContextualBindings
-```
-
-## Simple Contextual Bindings
-
-You can inject contextual implementation into different classes, like:
-
-```csharp
-// Inject a LastNameGenerator instance into the INameGenerator parameter of FirstNameService
-services
-    .AddContextualBinding<IFirstNameService, FirstNameService>()
-    .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
-;
-// Inject a LastNameGenerator instance into the INameGenerator parameter of LastNameService
-services
-    .AddContextualBinding<ILastNameService, LastNameService>()
-    .WithConstructorArgument<INameGenerator, LastNameGenerator>()
-;
-// Inject a FirstNameGenerator in the first INameGenerator parameter and
-// inject a LastNameGenerator in the second INameGenerator parameter of FullNameGenerator.
-services
-    .AddContextualBinding<INameGenerator, FullNameGenerator>()
-    .WithConstructorArgument<INameGenerator, FirstNameGenerator>()
-    .WithConstructorArgument<INameGenerator, LastNameGenerator>()
-;
-```
+Please open an issue and be as clear as possible; see _How to contribute?_ for more information.
 
 # How to contribute?
 
