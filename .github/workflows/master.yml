@@ -11,9 +11,36 @@ on:
         branches:
             - master
 jobs:
-    build:
+    build-and-test:
         runs-on: ubuntu-latest
 
+        steps:
+            - uses: actions/checkout@v1
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: '3.1.100'
+
+            # - uses: aarnott/nbgv@v0.3
+            #   with:
+            #       setAllVars: true
+
+            - name: Build
+              run: dotnet build --configuration Release
+
+            - name: Unit Test
+              run: dotnet test --configuration Release
+
+            # - name: Pack
+            #   run: dotnet pack --configuration Release
+            # - name: Push to feedz.io
+            #   run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
+            #   if: github.event_name == 'pull_request'
+
+    deploy:
+        runs-on: ubuntu-latest
+        needs: build-and-test
         steps:
             - uses: actions/checkout@v1
 
@@ -25,29 +52,15 @@ jobs:
             - uses: aarnott/nbgv@v0.3
               with:
                   setAllVars: true
-
-            - name: Build
-              run: dotnet build --configuration Release
-
-            - name: Unit Test
-              run: dotnet test --configuration Release
+                  PublicRelease: true
 
             - name: Pack
-              run: dotnet pack --configuration Release # /p:PackageVersion=$NBGV_NuGetPackageVersion
-
-            # - name: Generate build number
-            #   uses: einaregilsson/build-number@v2
-            #   with:
-            #       token: ${{secrets.GITHUB_TOKEN}}
-
-            # - name: Pack
-            #   run: dotnet pack --configuration Release /p:PackageVersion=0.0.0-github.$BUILD_NUMBER
+              run: dotnet pack --configuration Release
 
             - name: Push to feedz.io
               run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
-              #run: dotnet nuget push **/*.nupkg -n true -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
               if: github.event_name == 'pull_request'
 
             - name: Push to NuGet.org
               run: dotnet nuget push **/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
-              if: github.event_name == 'push' && github.ref == 'master'
+              if: github.event_name == 'push'
