@@ -160,13 +160,15 @@ To enable and scan for modules, use the following code:
 
 ```csharp
 services
-    .ScanForDIModules()
-    .FromAssemblyOf<Program>()
+    .AddDependencyInjectionModules()
+    .ScanAssemblies(typeof(Program).Assembly)
+    .Initialize()
 ;
 // OR
 services
-    .ScanForDIModules()
-    .FromAssemblyOf<AnyClassThatIsPartOfTheAssemblyThatYouWantToScan>()
+    .AddDependencyInjectionModules()
+    .ScanAssemblies(typeof(AnyClassThatIsPartOfTheAssemblyThatYouWantToScan).Assembly, typeof(ClassFromAnotherAssembly).Assembly)
+    .Initialize()
 ;
 ```
 
@@ -194,11 +196,22 @@ You can also register custom dependencies that can be injected in your modules l
 
 ```csharp
 services
-    .ScanForDIModules()
-    .FromAssemblyOf<Program>()
-    .WithConfiguration(configuration)
-    .WithDependencies(services => services.TryAddSingleton<ISomeInterface, SomeImplementation>())
+    .AddDependencyInjectionModules()
+    .UseConfiguration(configuration)
+    .ConfigureServices(services => services.TryAddSingleton<ISomeInterface, SomeImplementation>())
+    .ScanAssemblies(typeof(Program).Assembly)
+    .Initialize()
 ;
+// ...
+public class SomeOtherModule : DependencyInjectionModule
+{
+    public ContextualServiceInjectionModule(IServiceCollection services, ISomeInterface someInterface)
+        : base(services)
+    {
+        // You can now use `someInterface` to do something...
+    }
+}
+
 ```
 
 The dependencies are only used during the registration process, are only added to a private `IServiceCollection`, and are not added to the application `IServiceCollection`. Use these only to initialize modules.

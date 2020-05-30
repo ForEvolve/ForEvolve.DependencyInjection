@@ -24,8 +24,9 @@ namespace ContextualBindings.SimpleApp
                     .ConfigureServices(services =>
                     {
                         services
-                            .ScanForDIModules()
-                            .FromAssemblyOf<Program>()
+                            .AddDependencyInjectionModules()
+                            .ScanAssemblies(typeof(Program).Assembly)
+                            .Initialize()
                         ;
 
                         // MVC

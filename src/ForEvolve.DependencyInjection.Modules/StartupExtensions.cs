@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to add dependency to.</param>
         /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
-        public static IScanningContext ScanForDIModules(this IServiceCollection services)
+        public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services)
         {
             return new ScanningContext(services);
         }
@@ -26,11 +28,47 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="scanningContext">The scanning context to add <see cref="IConfiguration"/> to.</param>
         /// <param name="configuration">The <see cref="IConfiguration"/> to add.</param>
         /// <returns>The <paramref name="scanningContext"/>.</returns>
-        public static IScanningContext WithConfiguration(this IScanningContext scanningContext, IConfiguration configuration)
+        public static IScanningContext UseConfiguration(this IScanningContext scanningContext, IConfiguration configuration)
         {
             return scanningContext
-                .WithDependencies(services => services.TryAddSingleton(configuration))
+                .ConfigureServices(services => services.TryAddSingleton(configuration))
             ;
+        }
+
+        /// <summary>
+        /// Scan the specified assemblies and registers all <see cref="IDependencyInjectionModule"/>
+        /// implementations that are found with the <see cref="IScanningContext"/>.
+        /// </summary>
+        /// <param name="scanningContext">The <see cref="IScanningContext"/> to registers modules against.</param>
+        /// <param name="assemblies">The assemblies to scan for.</param>
+        /// <returns>The <paramref name="scanningContext"/>.</returns>
+        public static IScanningContext ScanAssemblies(this IScanningContext scanningContext, params Assembly[] assemblies)
+        {
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.IsDynamic)
+                {
+                    continue; // throw an exception? log an error/warning?
+                }
+                var modulesTypeInfo = assembly
+                    .DefinedTypes
+                    .Where(t => t.IsClass && !t.IsAbstract)
+                    .KeepOnlyDependencyInjectionModules();
+                ;
+                scanningContext.Register(modulesTypeInfo);
+            }
+            return scanningContext;
+        }
+
+        /// <summary>
+        /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
+        /// </summary>
+        /// <param name="services">The service collection to add dependency to.</param>
+        /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
+        [Obsolete("Use AddDependencyInjectionModules() instead. This should be removed in v3.0.", false)]
+        public static IScanningContext ScanForDIModules(this IServiceCollection services)
+        {
+            return services.AddDependencyInjectionModules();
         }
 
         /// <summary>
@@ -42,18 +80,23 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="T">The type in an assembly to scan.</typeparam>
         /// <param name="scanningContext">The <see cref="IScanningContext"/> to initialize.</param>
         /// <returns>The <paramref name="scanningContext"/>.</returns>
+        [Obsolete("Use ScanAssemblies(...) instead. This should be removed in v3.0.", false)]
         public static IScanningContext FromAssemblyOf<T>(this IScanningContext scanningContext)
         {
             var assemblyToScan = typeof(T).Assembly;
-            if (assemblyToScan.IsDynamic)
-            {
-                return scanningContext; // throw an exception?
-            }
-            var allTypes = assemblyToScan
-                .DefinedTypes
-                .Where(t => t.IsClass && !t.IsAbstract);
-            scanningContext.Initialize(allTypes);
-            return scanningContext;
+            return scanningContext.ScanAssemblies(assemblyToScan);
+        }
+
+        /// <summary>
+        /// Register the specified <see cref="IConfiguration"/>, used during DI module instantiation.
+        /// </summary>
+        /// <param name="scanningContext">The scanning context to add <see cref="IConfiguration"/> to.</param>
+        /// <param name="configuration">The <see cref="IConfiguration"/> to add.</param>
+        /// <returns>The <paramref name="scanningContext"/>.</returns>
+        [Obsolete("Use UseConfiguration(...) instead. This should be removed in v3.0.", false)]
+        public static IScanningContext WithConfiguration(this IScanningContext scanningContext, IConfiguration configuration)
+        {
+            return scanningContext.UseConfiguration(configuration);
         }
     }
 }
