@@ -8,6 +8,11 @@ namespace ForEvolve.DependencyInjection
     public interface IScanningContext
     {
         /// <summary>
+        /// Gets if the <see cref="IScanningContext.Initialize"/> method has been called.
+        /// </summary>
+        bool Initialized { get; }
+
+        /// <summary>
         /// Registers <see cref="IDependencyInjectionModule"/> dependencies that can be used during instantiation.
         /// These are only loaded in a local <see cref="IServiceCollection"/>.
         /// </summary>

@@ -12,7 +12,7 @@ namespace ForEvolve.DependencyInjection
     {
         protected IServiceCollection LocalServices { get; } = new ServiceCollection();
         private readonly List<TypeInfo> _modulesTypeInfo = new List<TypeInfo>();
-        private bool _initialized = false;
+        public bool Initialized { get; private set; } = false;
 
         public ScanningContext(IServiceCollection services)
         {
@@ -36,11 +36,14 @@ namespace ForEvolve.DependencyInjection
 
         public void Initialize()
         {
-            if (_initialized)
+            // Guard against double initialization
+            if (Initialized)
             {
                 throw new ScanningContextInitializedException();
             }
-            _initialized = true;
+            Initialized = true;
+
+            // Initialize the modules
             using var serviceProvider = LocalServices.BuildServiceProvider();
             var modules = _modulesTypeInfo
                 .KeepOnlyDependencyInjectionModules()
@@ -48,7 +51,7 @@ namespace ForEvolve.DependencyInjection
             ;
             foreach (var module in modules)
             {
-                ActivatorUtilities.CreateInstance(serviceProvider, module.AsType());
+                using var _ = ActivatorUtilities.CreateInstance(serviceProvider, module.AsType()) as IDisposable;
             }
         }
     }
