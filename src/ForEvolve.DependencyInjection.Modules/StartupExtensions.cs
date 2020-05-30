@@ -13,18 +13,21 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ForEvolveDependencyInjectionModulesStartupExtensions
     {
         /// <summary>
-        /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
+        /// Create an <see cref="IScanningContext"/>, scan specified assemblies,
+        /// and initialized the modules that were found.
         /// </summary>
         /// <param name="services">The service collection to add dependency to.</param>
         /// <param name="assemblies">The assemblies to scan for modules.</param>
-        /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
-        public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services, params Assembly[] assemblies)
+        /// <returns>The <see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddDependencyInjectionModules(this IServiceCollection services, params Assembly[] assemblies)
         {
-            return services.AddDependencyInjectionModules(initialize: true, assemblies);
+            services.AddDependencyInjectionModules(initialize: true, assemblies);
+            return services;
         }
 
         /// <summary>
-        /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
+        /// Create an <see cref="IScanningContext"/>, scan specified assemblies,
+        /// and optionaly initialized the modules that were found.
         /// </summary>
         /// <param name="services">The service collection to add dependency to.</param>
         /// <param name="initialize">
@@ -32,7 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// the <see cref="IScanningContext"/> after scanning the assemblies.
         /// </param>
         /// <param name="assemblies">The assemblies to scan for modules.</param>
-        /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
+        /// <returns>The created <see cref="IScanningContext"/>.</returns>
         public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services, bool initialize, params Assembly[] assemblies)
         {
             var context = new ScanningContext(services);
@@ -48,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Register the specified <see cref="IConfiguration"/>, used during DI module instantiation.
+        /// Register the specified <see cref="IConfiguration"/>, used during modules instantiation.
         /// </summary>
         /// <param name="scanningContext">The scanning context to add <see cref="IConfiguration"/> to.</param>
         /// <param name="configuration">The <see cref="IConfiguration"/> to add.</param>
@@ -63,6 +66,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Scan the specified assemblies and registers all <see cref="IDependencyInjectionModule"/>
         /// implementations that are found with the <see cref="IScanningContext"/>.
+        ///
+        /// This method can be called multiple times.
         /// </summary>
         /// <param name="scanningContext">The <see cref="IScanningContext"/> to registers modules against.</param>
         /// <param name="assemblies">The assemblies to scan for.</param>
@@ -90,10 +95,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to add dependency to.</param>
         /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
-        [Obsolete("Use AddDependencyInjectionModules() instead. This should be removed in v3.0.", false)]
+        [Obsolete("Use AddDependencyInjectionModules(...) instead. This should be removed in v3.0.", false)]
         public static IScanningContext ScanForDIModules(this IServiceCollection services)
         {
-            return services.AddDependencyInjectionModules();
+            return services.AddDependencyInjectionModules(initialize: false);
         }
 
         /// <summary>
@@ -105,7 +110,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="T">The type in an assembly to scan.</typeparam>
         /// <param name="scanningContext">The <see cref="IScanningContext"/> to initialize.</param>
         /// <returns>The <paramref name="scanningContext"/>.</returns>
-        [Obsolete("Use ScanAssemblies(...) instead. This should be removed in v3.0.", false)]
+        [Obsolete("Use AddDependencyInjectionModules(...) or ScanAssemblies(...) instead. This should be removed in v3.0.", false)]
         public static IScanningContext FromAssemblyOf<T>(this IScanningContext scanningContext)
         {
             var assemblyToScan = typeof(T).Assembly;
