@@ -159,17 +159,9 @@ dotnet add package ForEvolve.DependencyInjection.Modules
 To enable and scan for modules, use the following code:
 
 ```csharp
-services
-    .AddDependencyInjectionModules()
-    .ScanAssemblies(typeof(Program).Assembly)
-    .Initialize()
-;
+services.AddDependencyInjectionModules(typeof(Program).Assembly);
 // OR
-services
-    .AddDependencyInjectionModules()
-    .ScanAssemblies(typeof(AnyClassThatIsPartOfTheAssemblyThatYouWantToScan).Assembly, typeof(ClassFromAnotherAssembly).Assembly)
-    .Initialize()
-;
+services.AddDependencyInjectionModules(typeof(AnyClassThatIsPartOfTheAssemblyThatYouWantToScan).Assembly, typeof(ClassFromAnotherAssembly).Assembly);
 ```
 
 To create a module you can implement `IDependencyInjectionModule` or inherit from `DependencyInjectionModule`.
@@ -196,10 +188,10 @@ You can also register custom dependencies that can be injected in your modules l
 
 ```csharp
 services
-    .AddDependencyInjectionModules()
+    .AddDependencyInjectionModules(initialize: false)
+    .ScanAssemblies(typeof(Program).Assembly)
     .UseConfiguration(configuration)
     .ConfigureServices(services => services.TryAddSingleton<ISomeInterface, SomeImplementation>())
-    .ScanAssemblies(typeof(Program).Assembly)
     .Initialize()
 ;
 // ...
@@ -211,7 +203,6 @@ public class SomeOtherModule : DependencyInjectionModule
         // You can now use `someInterface` to do something...
     }
 }
-
 ```
 
 The dependencies are only used during the registration process, are only added to a private `IServiceCollection`, and are not added to the application `IServiceCollection`. Use these only to initialize modules.

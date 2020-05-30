@@ -16,10 +16,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
         /// </summary>
         /// <param name="services">The service collection to add dependency to.</param>
+        /// <param name="assemblies">The assemblies to scan for modules.</param>
         /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
-        public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services)
+        public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services, params Assembly[] assemblies)
         {
-            return new ScanningContext(services);
+            return services.AddDependencyInjectionModules(initialize: true, assemblies);
+        }
+
+        /// <summary>
+        /// Create a <see cref="IScanningContext"/> ready to scan for DI modules.
+        /// </summary>
+        /// <param name="services">The service collection to add dependency to.</param>
+        /// <param name="initialize">
+        /// When true, call the <see cref="IScanningContext.Initialize"/> method of
+        /// the <see cref="IScanningContext"/> after scanning the assemblies.
+        /// </param>
+        /// <param name="assemblies">The assemblies to scan for modules.</param>
+        /// <returns>The newly created <see cref="IScanningContext"/>.</returns>
+        public static IScanningContext AddDependencyInjectionModules(this IServiceCollection services, bool initialize, params Assembly[] assemblies)
+        {
+            var context = new ScanningContext(services);
+            if (assemblies != null)
+            {
+                context.ScanAssemblies(assemblies);
+            }
+            if (initialize)
+            {
+                context.Initialize();
+            }
+            return context;
         }
 
         /// <summary>

@@ -23,11 +23,7 @@ namespace ContextualBindings.SimpleApp
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .ConfigureServices(services =>
                     {
-                        services
-                            .AddDependencyInjectionModules()
-                            .ScanAssemblies(typeof(Program).Assembly)
-                            .Initialize()
-                        ;
+                        services.AddDependencyInjectionModules(typeof(Program).Assembly);
 
                         // MVC
                         services
