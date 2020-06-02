@@ -10,6 +10,10 @@ on:
     pull_request:
         branches:
             - master
+
+    repository_dispatch:
+        types:
+            - deploy
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
@@ -59,8 +63,8 @@ jobs:
 
             - name: Push to feedz.io
               run: dotnet nuget push **/*.nupkg -k ${{ secrets.FEEDZ_API_KEY }} -s https://f.feedz.io/forevolve/dependencyinjection/nuget/index.json
-              if: github.event_name == 'pull_request'
+              if: github.event_name == 'pull_request' || (github.event_name == 'repository_dispatch' && github.event.client_payload.feedz == true)
 
             - name: Push to NuGet.org
               run: dotnet nuget push **/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
-              if: github.event_name == 'push'
+              if: github.event_name == 'push' || (github.event_name == 'repository_dispatch' && github.event.client_payload.nuget == true)
