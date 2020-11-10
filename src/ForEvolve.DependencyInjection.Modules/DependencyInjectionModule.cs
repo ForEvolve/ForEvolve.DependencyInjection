@@ -16,7 +16,7 @@ namespace ForEvolve.DependencyInjection
     /// When inheriting of this class, make sure to register all dependencies
     /// that need to be injected in the constructor other than <see cref="IServiceCollection>"/>
     /// with the <see cref="IScanningContext"/> by calling the 
-    /// <see cref="IScanningContext.WithDependencies(Action{IServiceCollection})"/>
+    /// <see cref="IScanningContext.ConfigureServices(Action{IServiceCollection})"/>
     /// method or any available extension methods.
     /// </remarks>
     public abstract class DependencyInjectionModule : IDependencyInjectionModule
@@ -28,6 +28,14 @@ namespace ForEvolve.DependencyInjection
         public DependencyInjectionModule(IServiceCollection services)
         {
 
+        }
+
+        protected virtual void Dispose(bool disposing) { }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

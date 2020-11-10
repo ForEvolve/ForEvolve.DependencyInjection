@@ -1,4 +1,6 @@
-﻿namespace ForEvolve.DependencyInjection
+﻿using System;
+
+namespace ForEvolve.DependencyInjection
 {
     /// <summary>
     /// Marker interface that represents a DI module.
@@ -12,5 +14,5 @@
     /// <see cref="IScanningContext.WithDependencies(System.Action{IServiceCollection})"/>
     /// method or any available extension methods.
     /// </remarks>
-    public interface IDependencyInjectionModule { }
+    public interface IDependencyInjectionModule : IDisposable { }
 }
